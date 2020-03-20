@@ -1,11 +1,12 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
@@ -13,4 +14,12 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+ext {
+    javaMainClass = "com.tykowale.lox.Lox"
+}
+
+application {
+    mainClassName = javaMainClass
 }
