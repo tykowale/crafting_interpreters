@@ -10,3 +10,10 @@ Right now I use gradle - let's see if I continue that.
 ```bash
 ./gradlew run [--args="foo --bar"]
 ```
+
+## Building the jar and running it
+```bash
+./gradlew build
+
+java -jar build/libs/lox-1.0-SNAPSHOT.jar 
+```

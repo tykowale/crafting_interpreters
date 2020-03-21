@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-group 'org.example'
+group 'com.tykowale'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.11
@@ -26,4 +26,13 @@ application {
 
 run {
     standardInput = System.in
+}
+
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': javaMainClass
+        )
+    }
 }
