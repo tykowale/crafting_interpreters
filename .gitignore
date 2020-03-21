@@ -4,6 +4,7 @@ Thumbs.db
 *.iml
 *.ipr
 *.iws
+.gradle/**
 .gradle*
 .idea
 .idea/**

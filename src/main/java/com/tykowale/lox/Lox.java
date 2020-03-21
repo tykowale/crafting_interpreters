@@ -15,6 +15,7 @@ public final class Lox {
     }
 
     public static void main(String[] args) throws IOException {
+        System.out.println("> Welcome to Lox");
         if (args.length > 1) {
             System.out.println("Usage jlox [script]");
             System.exit(64);
