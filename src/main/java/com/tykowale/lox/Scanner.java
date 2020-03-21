@@ -1,13 +1,13 @@
 package com.tykowale.lox;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-// I know this is bad practice but it saves a ton of typing
 import static com.tykowale.lox.TokenType.*;
 
+// I know this is bad practice but it saves a ton of typing
+
 public class Scanner {
+    private static final Map<String, TokenType> keywords;
 
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
@@ -17,6 +17,26 @@ public class Scanner {
 
     Scanner(String source) {
         this.source = source;
+    }
+
+    static {
+        keywords = new HashMap<>();
+        keywords.put("and", AND);
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("super", SUPER);
+        keywords.put("this", THIS);
+        keywords.put("true", TRUE);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
     }
 
     public List<Token> scanTokens() {
@@ -97,6 +117,8 @@ public class Scanner {
             default:
                 if (isDigit(c)) {
                     number();
+                } else if (isAlpha(c)) {
+                    identifier();
                 } else {
                     Lox.error(line, "Unexpected character.");
                 }
@@ -122,12 +144,12 @@ public class Scanner {
         advance();
 
         // Trim the surrounding quotes
-        String value = source.substring(start + 1, current -1);
+        String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
     }
 
     private void number() {
-        while(isDigit(peek())) {
+        while (isDigit(peek())) {
             advance();
         }
 
@@ -136,15 +158,38 @@ public class Scanner {
             // consume the "."
             advance();
 
-            while(isDigit(peek())) {
+            while (isDigit(peek())) {
                 advance();
             }
         }
 
         addToken(
             NUMBER,
-            Double.parseDouble(source.substring(start, current));
+            Double.parseDouble(source.substring(start, current))
         );
+    }
+
+    private void identifier() {
+        while (isAlphaNumeric(peek())) {
+            advance();
+        }
+
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if (type == null) {
+            type = IDENTIFIER;
+        }
+        addToken(type);
+    }
+
+    private boolean isAlpha(char c) {
+        return c >= 'a' && c <= 'z'
+            || c >= 'A' && c <= 'Z'
+            || c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
     }
 
     private boolean match(char expected) {
