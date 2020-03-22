@@ -12,3 +12,6 @@ Thumbs.db
 build
 out
 logs
+
+# Python Stuff
+scripts/__pycache__/*
