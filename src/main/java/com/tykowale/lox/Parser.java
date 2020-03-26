@@ -6,11 +6,23 @@ import java.util.List;
 import static com.tykowale.lox.TokenType.*;
 
 public class Parser {
+    private static class ParseError extends RuntimeException {
+        private static final long serialVersionUID = 937916863505343530L;
+    }
+
     private final List<Token> tokens;
     private int current = 0;
 
     public Parser(List<Token> tokens) {
         this.tokens = tokens;
+    }
+
+    public Expr parse() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
     }
 
     private Expr expression() {
@@ -96,11 +108,7 @@ public class Parser {
             return new Expr.Grouping(expr);
         }
 
-        return null;
-    }
-
-    private void consume(TokenType type, String message) {
-        // section 6.3.1 fill this in
+        throw error(peek(), "Expect expression.");
     }
 
     private boolean match(TokenType... types) {
@@ -113,6 +121,15 @@ public class Parser {
 
         return false;
     }
+
+    private Token consume(TokenType type, String message) {
+        if (check(type)) {
+            return advance();
+        }
+
+        throw error(peek(), message);
+    }
+
 
     private boolean check(TokenType type) {
         if (isAtEnd()) {
@@ -140,5 +157,34 @@ public class Parser {
 
     private Token previous() {
         return tokens.get(current - 1);
+    }
+
+    private ParseError error(Token token, String message) {
+        Lox.error(token, message);
+        return new ParseError();
+    }
+
+    private void synchronize() {
+        advance();
+
+        while (!isAtEnd()) {
+            if (previous().type == SEMICOLON) {
+                return;
+            }
+
+            switch (peek().type) {
+                case CLASS:
+                case FUN:
+                case VAR:
+                case FOR:
+                case IF:
+                case WHILE:
+                case PRINT:
+                case RETURN:
+                    return;
+            }
+
+            advance();
+        }
     }
 }
